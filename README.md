@@ -13,7 +13,7 @@ Group Project
 ### Contexte
 
 Une équipe a besoin d'un outil pour organiser son travail. L’outil permet de 
-créer des tâches, de suivre leur avancement et de les organiser.
+créer des tâches, de suivre leur avancement et de les organiser (ex : Jira | Trello).
 
 ### Fonctionnalités obligatoires
 • Créer, modifier et supprimer des tâches (titre, description, priorité…)

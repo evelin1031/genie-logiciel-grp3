@@ -6,3 +6,4 @@ Group Project
 - Eve Lin
 - Meyssem Soussou
 - Doha Bentaoussy
+- Hugo Lege

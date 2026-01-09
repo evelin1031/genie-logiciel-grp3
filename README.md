@@ -4,3 +4,4 @@ Group Project
 ## Team
 
 - Eve Lin
+- Meyssem Soussou

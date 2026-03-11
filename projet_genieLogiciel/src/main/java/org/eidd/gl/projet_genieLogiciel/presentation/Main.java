@@ -1,9 +1,9 @@
 package org.eidd.gl.projet_genieLogiciel.presentation;
 
 import org.eidd.gl.projet_genieLogiciel.metier.User;
-import org.eidd.gl.projet_genieLogiciel.metier.UserService;
 import org.eidd.gl.projet_genieLogiciel.persistance.InMemoryUserRepository;
 import org.eidd.gl.projet_genieLogiciel.persistance.UserRepository;
+import org.eidd.gl.projet_genieLogiciel.service.UserService;
 
 public class Main {
 

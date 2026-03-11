@@ -1,7 +1,9 @@
-package org.eidd.gl.projet_genieLogiciel.metier;
+package org.eidd.gl.projet_genieLogiciel.service;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.eidd.gl.projet_genieLogiciel.metier.User;
 import org.eidd.gl.projet_genieLogiciel.persistance.UserRepository;
 
 public class UserService {

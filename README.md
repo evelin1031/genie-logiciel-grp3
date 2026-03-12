@@ -24,3 +24,38 @@ créer des tâches, de suivre leur avancement et de les organiser (ex : Jira | T
 - Assigner une tâche à un utilisateur
 - Filtres supplémentaires (par priorité, par deadline)
 - Deadline avec alerte
+
+### Répartition
+
+#### Meyssem :
+
+Task.java
+TaskRepository.java
+TaskService.java
+TaskServiceTest.java
+
+
+
+#### Doha : 
+
+User.java
+UserRepository.java
+UserService.java
+UserServiceTest.java
+
+
+#### Hugo : 
+
+Project.java
+InMemoryUserRepository.java
+ProjectRepository.java
+TaskRepositoryTest.java
+
+
+#### Eve : 
+
+Priority.java
+TaskStatus.java
+Main.java
+StatisticsService.java
+ProjectRepositoryTest.java

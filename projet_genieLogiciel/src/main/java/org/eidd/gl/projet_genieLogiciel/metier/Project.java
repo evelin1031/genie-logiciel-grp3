@@ -5,8 +5,8 @@ import java.util.*;
 public class Project {
 
     private static int counter = 0;
-    private final int id;
-    private final String name;
+    private int id;
+    private String name;
     private String description;
     private List<Task> tasks;
 
@@ -20,7 +20,11 @@ public class Project {
         this.name = name;
         this.description = description;
     }
-
+    
+    //Constructeur pour json
+    public Project() {
+        this.tasks = new ArrayList<>();
+    }
     
     // Getteurs
     public int getId() {

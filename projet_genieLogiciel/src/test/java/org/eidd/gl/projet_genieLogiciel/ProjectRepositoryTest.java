@@ -47,7 +47,7 @@ public class ProjectRepositoryTest {
 		// Assert
 		assertEquals(2, projects.size());
 	    assertEquals("Calculatrice", projects.get(0).getName());
-	    assertEquals("Ferme", projects.get(1).getName());	
+	    assertEquals("Ma superbe ferme d'animaux", projects.get(1).getName());	
 	}
 	
 	/* TODO tests a faire:

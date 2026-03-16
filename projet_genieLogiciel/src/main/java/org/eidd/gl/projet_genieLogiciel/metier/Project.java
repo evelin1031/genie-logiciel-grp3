@@ -19,6 +19,7 @@ public class Project {
         this.id = ++counter;
         this.name = name;
         this.description = description;
+        this.tasks = new ArrayList<>();
     }
     
     //Constructeur pour json

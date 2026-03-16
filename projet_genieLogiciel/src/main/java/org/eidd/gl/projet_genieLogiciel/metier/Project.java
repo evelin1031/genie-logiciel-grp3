@@ -52,4 +52,9 @@ public class Project {
         this.tasks = tasks;
     }
     
+    //Methodes
+    public void addTask(Task task) {
+    	tasks.add(task);
+    }
+    
 }

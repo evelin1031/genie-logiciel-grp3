@@ -8,4 +8,7 @@ public interface ProjectRepository {
 	List<Project> read();
     void write(List<Project> projects);
     void save(Project project);
+    Project findById(int id);
+    void deleteProjectById(int id);
+    void deleteRepo();
 }

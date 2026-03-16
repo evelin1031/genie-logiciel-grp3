@@ -54,7 +54,29 @@ public class ProjectRepositoryJSON implements ProjectRepository{
         }
     }
 	
+	//Fonction pour trouver un projet par son id dans le repoJSON
+	@Override
+	public Project findById(int id) {
+		List<Project> projects = read();
+		for(Project project: projects) {
+			if(project.getId() == id) {
+				return project;
+			}
+		}
+		//Si pas trouver renvoie null
+		return null;
+	}
 	
+	@Override
+	public void deleteProjectById(int id) {
+		List<Project> projects = read();
+		projects.removeIf(project -> project.getId() == id);
+		write(projects);
+	}
+	@Override
+	public void deleteRepo() {
+		file.delete();
+	}
+	//Todo: findByTask
 	
-    
 }

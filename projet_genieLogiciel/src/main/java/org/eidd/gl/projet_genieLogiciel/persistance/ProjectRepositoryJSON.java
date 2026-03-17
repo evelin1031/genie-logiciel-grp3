@@ -72,9 +72,10 @@ public class ProjectRepositoryJSON implements ProjectRepository{
 		projects.removeIf(project -> project.getId() == id);
 		write(projects);
 	}
-	
+	@Override
+	public void deleteRepo() {
+		file.delete();
+	}
 	//Todo: findByTask
 	
-	
-    
 }

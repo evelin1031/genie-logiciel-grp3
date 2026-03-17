@@ -19,6 +19,7 @@ public class Project {
         this.id = ++counter;
         this.name = name;
         this.description = description;
+        this.tasks = new ArrayList<>();
     }
     
     //Constructeur pour json
@@ -52,9 +53,8 @@ public class Project {
         this.tasks = tasks;
     }
     
-    //Methodes
     public void addTask(Task task) {
-    	tasks.add(task);
+    	this.tasks.add(task);
     }
     
 }

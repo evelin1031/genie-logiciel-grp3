@@ -10,4 +10,5 @@ public interface ProjectRepository {
     void save(Project project);
     Project findById(int id);
     void deleteProjectById(int id);
+    void deleteRepo();
 }

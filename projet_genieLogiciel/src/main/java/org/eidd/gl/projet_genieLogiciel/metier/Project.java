@@ -22,11 +22,6 @@ public class Project {
         this.tasks = new ArrayList<>();
     }
     
-    //Constructeur pour json
-    public Project() {
-        this.tasks = new ArrayList<>();
-    }
-    
     // Getteurs
     public int getId() {
         return id;

@@ -1,4 +1,6 @@
 package org.eidd.gl.projet_genieLogiciel.service;
+import org.eidd.gl.projet_genieLogiciel.metier.Project;
+import org.eidd.gl.projet_genieLogiciel.metier.Task;
 import org.eidd.gl.projet_genieLogiciel.persistance.ProjectRepository;
 
 public class ProjectService {

@@ -12,23 +12,24 @@ public class ProjectService {
         this.repository = repository;
     }
     
- 
-
+ //Trouve le projet choisi et change sa description
     public void updateProjectDescription(int projectId, String newDescription) {
         Project project = repository.findById(projectId);
         if (project == null) {
             throw new IllegalArgumentException("Projet introuvable");
         }
         project.setDescription(newDescription);
-        repository.save(project);
+        repository.update(project);
     }
 
+    //Trouve un projet dans notre repo et ajoute une task
     public void addTaskToProject(int projectId, Task task) {
         Project project = repository.findById(projectId);
         if (project == null) {
             throw new IllegalArgumentException("Projet introuvable");
         }
         project.addTask(task);
-        repository.save(project);
+        repository.update(project);
     }
+  
 }

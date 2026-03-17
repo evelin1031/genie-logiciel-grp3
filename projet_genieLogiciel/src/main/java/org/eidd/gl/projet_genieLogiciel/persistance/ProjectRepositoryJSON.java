@@ -76,6 +76,23 @@ public class ProjectRepositoryJSON implements ProjectRepository{
 	public void deleteRepo() {
 		file.delete();
 	}
+	
+	//Remplace le projet modifié par sa version maj
+	@Override
+    public void update(Project updatedProject) {
+        List<Project> projects = read();
+
+        for (int i = 0; i < projects.size(); i++) {
+            if (projects.get(i).getId() == updatedProject.getId()) {
+                projects.set(i, updatedProject);
+                write(projects);
+                return;
+            }
+        }
+
+        throw new IllegalArgumentException("Projet introuvable");
+    }
+	
 	//Todo: findByTask
 	
 }

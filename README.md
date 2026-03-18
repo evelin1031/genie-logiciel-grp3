@@ -29,33 +29,36 @@ créer des tâches, de suivre leur avancement et de les organiser (ex : Jira | T
 
 #### Meyssem :
 
-Task.java
-TaskRepository.java
-TaskService.java
-TaskServiceTest.java
-
+- Task.java
+- TaskRepository.java
+- TaskService.java
+- TaskTest.java
+- TaskRepositoryTest.java
+- TaskServiceTest.java
 
 
 #### Doha : 
 
-User.java
-UserRepository.java
-UserService.java
-UserServiceTest.java
+- User.java
+- UserRepository.java
+- UserService.java
+- UserServiceTest.java
 
 
 #### Hugo : 
 
-Project.java
-InMemoryUserRepository.java
-ProjectRepository.java
-TaskRepositoryTest.java
+- Project.java
+- InMemoryUserRepository.java
+- ProjectRepository.java
+- ProjectRepositoryTest.java
+- ProjectRepositoryJSON.java
+- ProjectService.java
 
 
 #### Eve : 
 
-Priority.java
-TaskStatus.java
-Main.java
-StatisticsService.java
-ProjectRepositoryTest.java
+- Priority.java
+- TaskStatus.java
+- Main.java
+- StatisticsService.java
+- StatisticsServiceTest.java

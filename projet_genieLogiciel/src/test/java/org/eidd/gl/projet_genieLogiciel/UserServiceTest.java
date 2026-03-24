@@ -1,13 +1,19 @@
 package org.eidd.gl.projet_genieLogiciel;
 
 import org.eidd.gl.projet_genieLogiciel.metier.User;
+
 import org.eidd.gl.projet_genieLogiciel.persistance.InMemoryUserRepository;
+
 import org.eidd.gl.projet_genieLogiciel.persistance.UserRepository;
+
 import org.eidd.gl.projet_genieLogiciel.service.UserService;
+
 import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;

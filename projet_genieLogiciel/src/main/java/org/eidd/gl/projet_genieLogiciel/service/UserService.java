@@ -18,7 +18,7 @@ public class UserService {
     }
 
     public void createUser(User user) {
-    	if (userRepository == null) {
+    	if (user == null) {
             throw new IllegalArgumentException("Le repository ne peut pas être null");
         }
         userRepository.save(user);

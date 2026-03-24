@@ -1,22 +1,18 @@
 package org.eidd.gl.projet_genieLogiciel;
 
-import org.eidd.gl.projet_genieLogiciel.metier.User;
-
-import org.eidd.gl.projet_genieLogiciel.persistance.InMemoryUserRepository;
-
-import org.eidd.gl.projet_genieLogiciel.persistance.UserRepository;
-
-import org.eidd.gl.projet_genieLogiciel.service.UserService;
-
-import org.junit.jupiter.api.BeforeEach;
-
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.eidd.gl.projet_genieLogiciel.metier.User;
+import org.eidd.gl.projet_genieLogiciel.persistance.InMemoryUserRepository;
+import org.eidd.gl.projet_genieLogiciel.persistance.UserRepository;
+import org.eidd.gl.projet_genieLogiciel.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class UserServiceTest {
 
@@ -30,7 +26,7 @@ public class UserServiceTest {
 
     @Test
     void creationUtilisateur() {
-        User user = new User("Alice", "alice@mail.com");
+        User user = new User("Doha", "doha@mail.com");
 
         userService.createUser(user);
 
@@ -40,8 +36,8 @@ public class UserServiceTest {
 
     @Test
     void recuperationListe() {
-        userService.createUser(new User("Alice", "alice@mail.com"));
-        userService.createUser(new User("Bob", "bob@mail.com"));
+        userService.createUser(new User("Doha", "doha@mail.com"));
+        userService.createUser(new User("Hugo", "hugo@mail.com"));
 
         List<User> users = userService.getAllUsers();
 
@@ -50,7 +46,7 @@ public class UserServiceTest {
 
     @Test
     void rechercheParId() {
-        User user = new User("Charlie", "charlie@mail.com");
+        User user = new User("Eve", "Eve@mail.com");
         userService.createUser(user);
 
         Optional<User> result = userService.getUserById(user.getId());
@@ -61,7 +57,7 @@ public class UserServiceTest {
 
     @Test
     void suppressionUtilisateur() {
-        User user = new User("David", "david@mail.com");
+        User user = new User("Meyssem", "meyssem@mail.com");
         userService.createUser(user);
 
         userService.deleteUser(user.getId());

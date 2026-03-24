@@ -43,12 +43,12 @@ créer des tâches, de suivre leur avancement et de les organiser (ex : Jira | T
 - UserRepository.java
 - UserService.java
 - UserServiceTest.java
+- InMemoryUserRepository.java
 
 
 #### Hugo : 
 
 - Project.java
-- InMemoryUserRepository.java
 - ProjectRepository.java
 - ProjectRepositoryTest.java
 - ProjectRepositoryJSON.java

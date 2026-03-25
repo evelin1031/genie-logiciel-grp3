@@ -11,6 +11,11 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public void save(User user) {
+    	if (user == null) {
+            throw new IllegalArgumentException("L'utilisateur ne peut pas être null");
+        }
+        // Remplace l'utilisateur s'il existe déjà 
+        delete(user.getId());
         users.add(user);
     }
 
@@ -21,12 +26,9 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findById(int id) {
-        for (User user : users) {
-            if (user.getId() == id) {
-                return Optional.of(user);
-            }
-        }
-        return Optional.empty();
+    	return users.stream()
+                .filter(user -> user.getId() == id)
+                .findFirst();
     }
 
     @Override

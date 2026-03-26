@@ -1,3 +1,5 @@
+![CI](https://github.com/dohabentaoussy/genie-logiciel-grp3/actions/workf
+lows/ci.yml/badge.svg)
 # genie-logiciel-grp3
 Group Project
 

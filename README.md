@@ -1,4 +1,4 @@
-![CI](https://github.com/dohabentaoussy/genie-logiciel-grp3/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/evelin1031/genie-logiciel-grp3/actions/workflows/ci.yml/badge.svg)
 
 # genie-logiciel-grp3
 Group Project

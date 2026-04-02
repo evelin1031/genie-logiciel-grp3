@@ -1,21 +1,28 @@
 package org.eidd.gl.projet_genieLogiciel.metier;
 
+import java.util.*;
+
 public class Project {
 
     private static int counter = 0;
-    private final int id;
-    private final String name;
+    private int id;
+    private String name;
+    private String description;
+    private List<Task> tasks;
 
-    public Project(String name) {
+    
+    // Constructeur, vérifie que les champs soient valides puis instancie l'objet
+    public Project(String name, String description) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Nom du projet obligatoire");
         }
         this.id = ++counter;
         this.name = name;
+        this.description = description;
+        this.tasks = new ArrayList<>();
     }
-
     
-    
+    // Getteurs
     public int getId() {
         return id;
     }
@@ -23,4 +30,26 @@ public class Project {
     public String getName() {
         return name;
     }
+    
+    public String getDescription() {
+    	return description;
+    }
+    
+    public List<Task> getTasks(){
+    	return tasks;
+    }
+    
+    // Setters
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+    
+    public void addTask(Task task) {
+    	this.tasks.add(task);
+    }
+    
 }

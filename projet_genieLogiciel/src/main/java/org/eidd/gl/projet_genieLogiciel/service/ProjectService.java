@@ -1,0 +1,35 @@
+package org.eidd.gl.projet_genieLogiciel.service;
+import org.eidd.gl.projet_genieLogiciel.metier.Project;
+import org.eidd.gl.projet_genieLogiciel.metier.Task;
+import org.eidd.gl.projet_genieLogiciel.persistance.ProjectRepository;
+
+
+public class ProjectService {
+    private final ProjectRepository repository;
+
+    //On branche le repo souhaité
+    public ProjectService(ProjectRepository repository) {
+        this.repository = repository;
+    }
+    
+ //Trouve le projet choisi et change sa description
+    public void updateProjectDescription(int projectId, String newDescription) {
+        Project project = repository.findById(projectId);
+        if (project == null) {
+            throw new IllegalArgumentException("Projet introuvable");
+        }
+        project.setDescription(newDescription);
+        repository.update(project);
+    }
+
+    //Trouve un projet dans notre repo et ajoute une task
+    public void addTaskToProject(int projectId, Task task) {
+        Project project = repository.findById(projectId);
+        if (project == null) {
+            throw new IllegalArgumentException("Projet introuvable");
+        }
+        project.addTask(task);
+        repository.update(project);
+    }
+  
+}

@@ -1,13 +1,15 @@
 package org.eidd.gl.projet_genieLogiciel.persistance;
 
 import java.util.List;
-import java.util.Optional;
 import org.eidd.gl.projet_genieLogiciel.metier.Project;
 
 public interface ProjectRepository {
 
+	List<Project> read();
+    void write(List<Project> projects);
     void save(Project project);
-    List<Project> findAll();
-    Optional<Project> findById(int id);
-    void delete(int id);
+    Project findById(int id);
+    void deleteProjectById(int id);
+    void deleteRepo();
+    void update(Project project);
 }

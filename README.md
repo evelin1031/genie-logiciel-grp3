@@ -1,3 +1,6 @@
+![CI](https://github.com/evelin1031/genie-logiciel-grp3/actions/workflows/ci.yml/badge.svg)
+[![SonarQube Cloud](https://sonarcloud.io/images/project_badges/sonarcloud-light.svg)](https://sonarcloud.io/summary/new_code?id=evelin1031_genie-logiciel-grp3)
+
 # genie-logiciel-grp3
 Group Project
 

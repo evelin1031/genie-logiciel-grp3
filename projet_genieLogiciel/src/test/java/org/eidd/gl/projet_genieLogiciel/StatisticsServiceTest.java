@@ -1,13 +1,18 @@
 package org.eidd.gl.projet_genieLogiciel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Date;
 
 import org.eidd.gl.projet_genieLogiciel.metier.Priority;
 import org.eidd.gl.projet_genieLogiciel.metier.Project;
 import org.eidd.gl.projet_genieLogiciel.metier.Task;
 import org.eidd.gl.projet_genieLogiciel.metier.TaskStatus;
+import org.eidd.gl.projet_genieLogiciel.presentation.Main;
 import org.eidd.gl.projet_genieLogiciel.service.StatisticsService;
 import org.junit.jupiter.api.Test;
 
@@ -120,5 +125,41 @@ public class StatisticsServiceTest {
 
         // La tâche null ne doit pas être comptée
         assertEquals(1, statisticsService.countPendingTasks(project));
+    }
+
+    @Test
+    void shouldDisplayTaskManagementDemoInMain() {
+        ByteArrayInputStream input = new ByteArrayInputStream(
+                "Eve\neve@mail.com\n1\n2\nNouvelle tache\nDescription test\n0\n".getBytes()
+        );
+        java.io.InputStream originalIn = System.in;
+        PrintStream originalOut = System.out;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        try {
+            System.setIn(input);
+            System.setOut(new PrintStream(output));
+            Main.main(new String[0]);
+        } finally {
+            System.setIn(originalIn);
+            System.setOut(originalOut);
+        }
+
+        String consoleOutput = output.toString();
+
+        assertTrue(consoleOutput.contains("GESTIONNAIRE DE TACHES"));
+        assertTrue(consoleOutput.contains("Utilisateur : Eve"));
+        assertTrue(consoleOutput.contains("1. Afficher les taches"));
+        assertTrue(consoleOutput.contains("2. Ajouter une tache"));
+        assertTrue(consoleOutput.contains("3. Changer le statut d'une tache"));
+        assertTrue(consoleOutput.contains("4. Changer la priorite d'une tache"));
+        assertTrue(consoleOutput.contains("5. Modifier une tache"));
+        assertTrue(consoleOutput.contains("6. Supprimer une tache"));
+        assertTrue(consoleOutput.contains("Description :"));
+        assertTrue(consoleOutput.contains("Creee par : Eve"));
+        assertTrue(consoleOutput.contains("Tache ajoutee."));
+        assertTrue(consoleOutput.contains("Priorite : HIGH"));
+        assertTrue(consoleOutput.contains("Statut : IN_PROGRESS"));
+        assertTrue(consoleOutput.contains("Fermeture de l'application."));
     }
 }

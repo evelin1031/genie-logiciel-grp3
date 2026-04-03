@@ -27,14 +27,13 @@ public class TaskService {
     public Task createTask(String title, String description, String priorityValue, String statusValue, Date deadline, User creator, User assignedUser) {
         Priority priority = "1".equals(priorityValue) ? Priority.LOW : "3".equals(priorityValue) ? Priority.HIGH : Priority.MEDIUM;
         Task task = new Task(title, description, priority, deadline, creator);
+        task.setCreatedBy(creator);
         if ("2".equals(statusValue)) {
             task.setStatus(TaskStatus.IN_PROGRESS);
         } else if ("3".equals(statusValue)) {
             task.setStatus(TaskStatus.DONE);
         }
-        if (assignedUser != null) {
-            task.setAssignedUser(assignedUser);
-        }
+        task.setAssignedUser(assignedUser);
         return task;
     }
 

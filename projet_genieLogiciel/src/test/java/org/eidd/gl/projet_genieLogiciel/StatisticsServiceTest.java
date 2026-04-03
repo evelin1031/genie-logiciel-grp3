@@ -130,7 +130,7 @@ public class StatisticsServiceTest {
     @Test
     void shouldDisplayTaskManagementDemoInMain() {
         ByteArrayInputStream input = new ByteArrayInputStream(
-                "Eve\neve@mail.com\n1\n2\nNouvelle tache\nDescription test\n0\n".getBytes()
+                "1\n2\nNouvelle tache\nDescription test\n1\n0\n".getBytes()
         );
         java.io.InputStream originalIn = System.in;
         PrintStream originalOut = System.out;
@@ -148,18 +148,16 @@ public class StatisticsServiceTest {
         String consoleOutput = output.toString();
 
         assertTrue(consoleOutput.contains("GESTIONNAIRE DE TACHES"));
-        assertTrue(consoleOutput.contains("Utilisateur : Eve"));
         assertTrue(consoleOutput.contains("1. Afficher les taches"));
         assertTrue(consoleOutput.contains("2. Ajouter une tache"));
-        assertTrue(consoleOutput.contains("3. Changer le statut d'une tache"));
-        assertTrue(consoleOutput.contains("4. Changer la priorite d'une tache"));
+        assertTrue(consoleOutput.contains("3. Changer le statut d une tache"));
+        assertTrue(consoleOutput.contains("4. Changer la priorite d une tache"));
         assertTrue(consoleOutput.contains("5. Modifier une tache"));
         assertTrue(consoleOutput.contains("6. Supprimer une tache"));
         assertTrue(consoleOutput.contains("Description :"));
-        assertTrue(consoleOutput.contains("Creee par : Eve"));
-        assertTrue(consoleOutput.contains("Tache ajoutee."));
+        assertTrue(consoleOutput.contains("Tache ajoutee"));
         assertTrue(consoleOutput.contains("Priorite : HIGH"));
         assertTrue(consoleOutput.contains("Statut : IN_PROGRESS"));
-        assertTrue(consoleOutput.contains("Fermeture de l'application."));
+        assertTrue(consoleOutput.contains("Fermeture de l application"));
     }
 }

@@ -7,13 +7,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.eidd.gl.projet_genieLogiciel.metier.User;
-import org.eidd.gl.projet_genieLogiciel.persistance.AppDataStore;
+//import org.eidd.gl.projet_genieLogiciel.persistance.AppDataStore;
 import org.eidd.gl.projet_genieLogiciel.persistance.UserRepository;
 
 public class UserService {
 
     private final UserRepository userRepository;
-    private final AppDataStore appDataStore = new AppDataStore();
+//    private final AppDataStore appDataStore = new AppDataStore();
     private final Map<String, AccountData> accounts = new LinkedHashMap<>();
 
     public UserService(UserRepository userRepository) {
@@ -86,16 +86,16 @@ public class UserService {
         return null;
     }
 
-    public void saveAccounts() {
-        appDataStore.writeAccounts(new ArrayList<>(accounts.values()));
-    }
+ //   public void saveAccounts() {
+ //       appDataStore.writeAccounts(new ArrayList<>(accounts.values()));
+ //   }
 
     // recharge les comptes sauvegardes au demarage
-    private void loadAccounts() {
-        for (AccountData account : appDataStore.readAccounts()) {
-            accounts.put(account.email, account);
-        }
-    }
+//    private void loadAccounts() {
+//       for (AccountData account : appDataStore.readAccounts()) {
+//           accounts.put(account.email, account);
+//        }
+//   }
 
     public static class AccountData {
         public String pseudo;

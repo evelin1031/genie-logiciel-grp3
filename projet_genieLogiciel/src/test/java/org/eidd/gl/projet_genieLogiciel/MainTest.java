@@ -14,7 +14,7 @@ public class MainTest {
     @Test
     void shouldHandleInvalidChoiceInMain() {
         ByteArrayInputStream input = new ByteArrayInputStream(
-                ("8\n0\n").getBytes()
+                ("8\n\n0\n").getBytes()
         );
         java.io.InputStream originalIn = System.in;
         PrintStream originalOut = System.out;
@@ -32,6 +32,6 @@ public class MainTest {
         String consoleOutput = output.toString();
 
         assertTrue(consoleOutput.contains("Choix invalide"));
-        assertTrue(consoleOutput.contains("Fermeture de l application"));
+        assertTrue(consoleOutput.contains("Fermeture de l'application."));
     }
 }

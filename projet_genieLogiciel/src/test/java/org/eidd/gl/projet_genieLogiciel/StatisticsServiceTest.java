@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 import java.util.Date;
 
@@ -17,6 +18,7 @@ import org.eidd.gl.projet_genieLogiciel.service.StatisticsService;
 import org.junit.jupiter.api.Test;
 
 public class StatisticsServiceTest {
+    // verifie les stats et le scenario console principal
 
     private final StatisticsService statisticsService = new StatisticsService();
 
@@ -129,8 +131,16 @@ public class StatisticsServiceTest {
 
     @Test
     void shouldDisplayTaskManagementDemoInMain() {
+        File dataFile = new File("app-data.json");
+        dataFile.delete();
         ByteArrayInputStream input = new ByteArrayInputStream(
-                "1\n2\nNouvelle tache\nDescription test\n1\n0\n".getBytes()
+                ("2\nEve\neve@mail.com\neve@mail.com\nsecret\n" +
+                "1\n1\nProjet A\n\n" +
+                "2\nNouvelle tache\nDescription test\n3\n2\n5\n2\n\n" +
+                "1\n\n" +
+                "3\n\n" +
+                "7\n" +
+                "0\n").getBytes()
         );
         java.io.InputStream originalIn = System.in;
         PrintStream originalOut = System.out;
@@ -141,23 +151,34 @@ public class StatisticsServiceTest {
             System.setOut(new PrintStream(output));
             Main.main(new String[0]);
         } finally {
+            dataFile.delete();
             System.setIn(originalIn);
             System.setOut(originalOut);
         }
 
         String consoleOutput = output.toString();
 
-        assertTrue(consoleOutput.contains("GESTIONNAIRE DE TACHES"));
+        assertTrue(consoleOutput.contains("CONNEXION"));
+        assertTrue(consoleOutput.contains("Utilisateur : Eve (eve@mail.com)"));
+        assertTrue(consoleOutput.contains("1. Se connecter"));
+        assertTrue(consoleOutput.contains("2. S'inscrire"));
+        assertTrue(consoleOutput.contains("1. Creer ou rejoindre un projet"));
+        assertTrue(consoleOutput.contains("2. Se deconnecter"));
         assertTrue(consoleOutput.contains("1. Afficher les taches"));
         assertTrue(consoleOutput.contains("2. Ajouter une tache"));
-        assertTrue(consoleOutput.contains("3. Changer le statut d une tache"));
-        assertTrue(consoleOutput.contains("4. Changer la priorite d une tache"));
-        assertTrue(consoleOutput.contains("5. Modifier une tache"));
-        assertTrue(consoleOutput.contains("6. Supprimer une tache"));
+        assertTrue(consoleOutput.contains("3. Afficher les membres du projet"));
+        assertTrue(consoleOutput.contains("5. Choisir une tache a modifier"));
+        assertTrue(consoleOutput.contains("6. Changer de projet"));
+        assertTrue(consoleOutput.contains("7. Se deconnecter"));
+        assertTrue(consoleOutput.contains("Projet actif : Projet A"));
         assertTrue(consoleOutput.contains("Description :"));
-        assertTrue(consoleOutput.contains("Tache ajoutee"));
+        assertTrue(consoleOutput.contains("Creee par : Eve"));
+        assertTrue(consoleOutput.contains("Tache ajoutee."));
         assertTrue(consoleOutput.contains("Priorite : HIGH"));
         assertTrue(consoleOutput.contains("Statut : IN_PROGRESS"));
-        assertTrue(consoleOutput.contains("Fermeture de l application"));
+        assertTrue(consoleOutput.contains("Delai :"));
+        assertTrue(consoleOutput.contains("MEMBRES DU PROJET"));
+        assertTrue(consoleOutput.contains("- Eve (eve@mail.com)"));
+        assertTrue(consoleOutput.contains("Fermeture de l'application."));
     }
 }

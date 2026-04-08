@@ -114,7 +114,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.3.1</version>      </plugin>
+        <version>3.3.1</version>
+        <configuration>
+          <configLocation>checkstyle.xml</configLocation>
+          <violationSeverity>warning</violationSeverity>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>

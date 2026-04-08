@@ -35,6 +35,25 @@ public class Task {
         this.createdAt = new Date();
     }
 
+    public Task(String title, String description, Priority priority, Date deadline, User createdBy, User assignedUser) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("Titre obligatoire");
+        }
+        if (priority == null) {
+            throw new IllegalArgumentException("Priority obligatoire");
+        }
+
+        this.id = ++counter;
+        this.title = title;
+        this.description = description;
+        this.priority = priority;
+        this.deadline = deadline;
+        this.createdBy = createdBy;
+        this.assignedUser = assignedUser;
+        this.status = TaskStatus.TODO;
+        this.createdAt = new Date();
+    }
+
     public int getId() {
         return id;
     }

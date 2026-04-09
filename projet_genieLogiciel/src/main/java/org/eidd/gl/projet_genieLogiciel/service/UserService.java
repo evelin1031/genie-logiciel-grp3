@@ -63,7 +63,9 @@ public class UserService {
             return "Inscription impossible.";
         }
         if (!isPasswordStrong(password)) {
-            return "Le mot de passe doit contenir au moins 8 caracteres, une majuscule, une minuscule, un chiffre et un caractere special.";
+            return "Le mot de passe doit contenir au moins 8 caracteres, "
+                    + "une majuscule, une minuscule, un chiffre "
+                    + "et un caractere special.";
         }
         if (findAccountByPseudo(pseudo) != null) {
             return "Pseudo deja utilise.";

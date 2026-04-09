@@ -27,6 +27,9 @@ jobs:
 
       - name: Build
         run: mvn compile -B
+      
+      - name: Checkstyle
+        run: mvn checkstyle:check -B
 
       - name: Run tests
         run: mvn test -B

@@ -2,6 +2,7 @@ package org.eidd.gl.projet_genieLogiciel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -64,5 +65,25 @@ public class UserServiceTest {
 
         Optional<User> result = userService.getUserById(user.getId());
         assertFalse(result.isPresent());
+    }
+
+    @Test
+    void inscriptionEtConnexionAvecMotDePasseHash() {
+        String error = userService.register("Eve", "eve@mail.com", "eve@mail.com", "Secret123!");
+
+        assertNull(error);
+        assertTrue(userService.login("eve@mail.com", "Secret123!") != null);
+        assertTrue(userService.findAccountByEmail("eve@mail.com").passwordHash != null);
+    }
+
+    @Test
+    void refuseMotDePasseTropFaible() {
+        String error = userService.register("Eve", "eve@mail.com", "eve@mail.com", "1234");
+
+        assertEquals(
+                "Le mot de passe doit contenir au moins 8 caracteres, une majuscule, une minuscule, un chiffre et un caractere special.",
+                error
+        );
+        assertTrue(userService.login("eve@mail.com", "1234") == null);
     }
 }

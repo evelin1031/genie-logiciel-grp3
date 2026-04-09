@@ -134,7 +134,7 @@ public class StatisticsServiceTest {
         File dataFile = new File("app-data.json");
         dataFile.delete();
         ByteArrayInputStream input = new ByteArrayInputStream(
-                ("2\nEve\neve@mail.com\neve@mail.com\nsecret\n" +
+                ("2\nEve\neve@mail.com\neve@mail.com\nSecret123!\n" +
                 "1\n1\nProjet A\n\n" +
                 "2\nNouvelle tache\nDescription test\n3\n2\n5\n2\n\n" +
                 "1\n\n" +

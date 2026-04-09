@@ -16,10 +16,17 @@ import org.eidd.gl.projet_genieLogiciel.service.UserService;
 
 // gere l interface console avec les menus et les saisies
 public class Cli {
+    private static final int MAX_LOGIN_ATTEMPTS = 3;
+    private static final long LOGIN_COOLDOWN_MS = 30_000L;
+    private static final long SESSION_TIMEOUT_MS = Long.parseLong(
+            System.getenv().getOrDefault("APP_SESSION_TIMEOUT_MS", "900000")
+    );
+
     private final Scanner scanner = new Scanner(System.in);
     private final UserService userService;
     private final ProjectService projectService;
     private boolean running = true;
+    private long lastInteractionTime = System.currentTimeMillis();
 
     public Cli() {
         this(
@@ -42,6 +49,11 @@ public class Cli {
                     System.out.println("Fermeture de l'application.");
                     return;
                 }
+                continue;
+            }
+            if (sessionExpired()) {
+                pause("Session expiree. Veuillez vous reconnecter.");
+                account = null;
                 continue;
             }
             account = handleMainMenu(account);
@@ -168,52 +180,85 @@ public class Cli {
     // gere la connexion et l inscription
     private UserService.AccountData authenticate() {
         int failedAttempts = 0;
+        long blockedUntil = 0L;
         while (true) {
-            clearScreen();
-            printTitle("CONNEXION");
-            System.out.println("1. Se connecter");
-            System.out.println("2. S'inscrire");
-            System.out.println("0. Quitter");
-            System.out.println();
-            System.out.print("Votre choix : ");
-            String choice = scanner.nextLine().trim();
+            if (isLoginTemporarilyBlocked(blockedUntil)) {
+                continue;
+            }
+            String choice = askAuthenticationChoice();
 
             if ("1".equals(choice)) {
-                String email = ask("Email : ");
-                String password = readPassword("Mot de passe : ");
-                if (email == null || password == null) {
-                    continue;
-                }
-                UserService.AccountData account = userService.login(email, password);
+                UserService.AccountData account = tryLogin();
                 if (account != null) {
+                    touchSession();
                     return account;
                 }
                 failedAttempts++;
-                if (failedAttempts >= 3) {
-                    pause("Vous avez utilise le nombre d'essais de cette session. Veuillez reessayer ulterieurement.");
-                    return null;
+                if (failedAttempts >= MAX_LOGIN_ATTEMPTS) {
+                    blockedUntil = System.currentTimeMillis() + LOGIN_COOLDOWN_MS;
+                    failedAttempts = 0;
                 }
-                pause("Connexion impossible.");
             } else if ("2".equals(choice)) {
-                String pseudo = ask("Pseudo : ");
-                String email = ask("Email : ");
-                String confirmEmail = ask("Confirmation email : ");
-                String password = readPassword("Mot de passe : ");
-                if (pseudo == null || email == null || confirmEmail == null || password == null) {
-                    continue;
+                UserService.AccountData account = tryRegister();
+                if (account != null) {
+                    touchSession();
+                    return account;
                 }
-                String error = userService.register(pseudo, email, confirmEmail, password);
-                if (error == null) {
-                    projectService.saveProjects();
-                    return userService.login(email, password);
-                }
-                pause(error);
             } else if ("0".equals(choice)) {
                 return null;
             } else {
                 pause("Choix invalide.");
             }
         }
+    }
+
+    private boolean isLoginTemporarilyBlocked(long blockedUntil) {
+        if (System.currentTimeMillis() < blockedUntil) {
+            pause("Connexion impossible.");
+            return true;
+        }
+        return false;
+    }
+
+    private String askAuthenticationChoice() {
+        clearScreen();
+        printTitle("CONNEXION");
+        System.out.println("1. Se connecter");
+        System.out.println("2. S'inscrire");
+        System.out.println("0. Quitter");
+        System.out.println();
+        System.out.print("Votre choix : ");
+        return scanner.nextLine().trim();
+    }
+
+    private UserService.AccountData tryLogin() {
+        String email = ask("Email : ");
+        String password = readPassword("Mot de passe : ");
+        if (email == null || password == null) {
+            return null;
+        }
+        UserService.AccountData account = userService.login(email, password);
+        if (account == null) {
+            pause("Connexion impossible.");
+        }
+        return account;
+    }
+
+    private UserService.AccountData tryRegister() {
+        String pseudo = ask("Pseudo : ");
+        String email = ask("Email : ");
+        String confirmEmail = ask("Confirmation email : ");
+        String password = readPassword("Mot de passe : ");
+        if (pseudo == null || email == null || confirmEmail == null || password == null) {
+            return null;
+        }
+        String error = userService.register(pseudo, email, confirmEmail, password);
+        if (error != null) {
+            pause(error);
+            return null;
+        }
+        projectService.saveProjects();
+        return userService.login(email, password);
     }
 
     // gere le choix entre creation et connexion a un projet
@@ -466,6 +511,7 @@ public class Cli {
         System.out.println("Tapez R pour revenir.");
         System.out.println();
         System.out.print(prompt);
+        touchSession();
         String value = scanner.nextLine().trim();
         return "R".equalsIgnoreCase(value) ? null : value;
     }
@@ -478,6 +524,7 @@ public class Cli {
         Console console = System.console();
         if (console != null) {
             char[] chars = console.readPassword(prompt);
+            touchSession();
             if (chars == null) {
                 return null;
             }
@@ -485,6 +532,7 @@ public class Cli {
             return "R".equalsIgnoreCase(value) ? null : value;
         }
         System.out.print(prompt);
+        touchSession();
         String value = scanner.nextLine().trim();
         return "R".equalsIgnoreCase(value) ? null : value;
     }
@@ -592,7 +640,16 @@ public class Cli {
     private void waitEnter() {
         System.out.println();
         System.out.println("Appuyez sur Entree pour continuer...");
+        touchSession();
         scanner.nextLine();
+    }
+
+    private boolean sessionExpired() {
+        return System.currentTimeMillis() - lastInteractionTime > SESSION_TIMEOUT_MS;
+    }
+
+    private void touchSession() {
+        lastInteractionTime = System.currentTimeMillis();
     }
 
     private static String valueOrDefault(String value, String fallback) {

@@ -28,7 +28,7 @@ public class CliTest {
         File dataFile = new File("app-data.json");
         dataFile.delete();
         ByteArrayInputStream input = new ByteArrayInputStream(
-                ("2\nEve\neve@test.com\neve@test.com\n1234\n" +
+                ("2\nEve\neve@test.com\neve@test.com\nSecret123!\n" +
                 "1\n1\nProjet Test\n\n" +
                 "2\nTache terminee\nDescription\n3\n3\n4\n2\n\n" +
                 "1\n\n" +
@@ -88,9 +88,9 @@ public class CliTest {
         File dataFile = new File("app-data.json");
         dataFile.delete();
         ByteArrayInputStream input = new ByteArrayInputStream(
-                ("2\nEve\neve@login.com\neve@login.com\n1234\n" +
+                ("2\nEve\neve@login.com\neve@login.com\nSecret123!\n" +
                 "2\n" +
-                "1\neve@login.com\n1234\n" +
+                "1\neve@login.com\nSecret123!\n" +
                 "0\n").getBytes()
         );
         java.io.InputStream originalIn = System.in;
@@ -130,9 +130,9 @@ public class CliTest {
 
         UserService userService = (UserService) userField.get(cli);
         ProjectService projectService = (ProjectService) projectField.get(cli);
-        userService.register("Eve", "eve@proj.com", "eve@proj.com", "1234");
-        userService.register("Bob", "bob@proj.com", "bob@proj.com", "1234");
-        UserService.AccountData eve = userService.login("eve@proj.com", "1234");
+        userService.register("Eve", "eve@proj.com", "eve@proj.com", "Secret123!");
+        userService.register("Bob", "bob@proj.com", "bob@proj.com", "Secret123!");
+        UserService.AccountData eve = userService.login("eve@proj.com", "Secret123!");
         projectService.createProject(eve, "Projet Test");
         scannerField.set(cli, new java.util.Scanner(new ByteArrayInputStream("Bob\nabc\n\n".getBytes())));
 

@@ -1,6 +1,7 @@
 package org.eidd.gl.projet_genieLogiciel.presentation;
 
 import java.io.Console;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -8,6 +9,7 @@ import java.util.Scanner;
 import org.eidd.gl.projet_genieLogiciel.metier.Task;
 import org.eidd.gl.projet_genieLogiciel.metier.User;
 import org.eidd.gl.projet_genieLogiciel.persistance.InMemoryUserRepository;
+import org.eidd.gl.projet_genieLogiciel.persistance.ProjectRepositoryJSON;
 import org.eidd.gl.projet_genieLogiciel.service.ProjectService;
 import org.eidd.gl.projet_genieLogiciel.service.TaskService;
 import org.eidd.gl.projet_genieLogiciel.service.UserService;
@@ -15,12 +17,24 @@ import org.eidd.gl.projet_genieLogiciel.service.UserService;
 // gere l interface console avec les menus et les saisies
 public class Cli {
     private final Scanner scanner = new Scanner(System.in);
-    private final UserService userService = new UserService(new InMemoryUserRepository());
-    private final ProjectService projectService = new ProjectService(null);
+    private final UserService userService;
+    private final ProjectService projectService;
+    private boolean running = true;
+
+    public Cli() {
+        this(
+                new UserService(new InMemoryUserRepository()),
+                new ProjectService(new ProjectRepositoryJSON())
+        );
+    }
+
+    public Cli(UserService userService, ProjectService projectService) {
+        this.userService = userService;
+        this.projectService = projectService;
+    }
 
     public void run() {
         UserService.AccountData account = null;
-        boolean running = true;
         while (running) {
             if (account == null) {
                 account = authenticate();
@@ -30,78 +44,102 @@ public class Cli {
                 }
                 continue;
             }
-
-            clearScreen();
-            printMenu(account);
-            switch (scanner.nextLine().trim()) {
-                case "1":
-                    if (projectService.hasActiveProject(account)) {
-                        showTasks(account);
-                    } else {
-                        pause(chooseProject(account));
-                        userService.saveAccounts();
-                    }
-                    break;
-                case "2":
-                    if (projectService.hasActiveProject(account)) {
-                        createTask(account);
-                    } else {
-                        userService.saveAccounts();
-                        projectService.saveProjects();
-                        account = null;
-                    }
-                    break;
-                case "3":
-                    if (projectService.hasActiveProject(account)) {
-                        showMembers(account);
-                    } else {
-                        pause("Choix invalide.");
-                    }
-                    break;
-                case "4":
-                    if (projectService.hasActiveProject(account)) {
-                        pause(addMember(account));
-                    } else {
-                        pause("Choix invalide.");
-                    }
-                    break;
-                case "5":
-                    if (projectService.hasActiveProject(account)) {
-                        manageTask(account);
-                    } else {
-                        pause("Choix invalide.");
-                    }
-                    break;
-                case "6":
-                    if (projectService.hasActiveProject(account)) {
-                        projectService.leaveProject(account);
-                        userService.saveAccounts();
-                        pause(chooseProject(account));
-                        userService.saveAccounts();
-                    } else {
-                        pause("Choix invalide.");
-                    }
-                    break;
-                case "7":
-                    if (projectService.hasActiveProject(account)) {
-                        userService.saveAccounts();
-                        projectService.saveProjects();
-                        account = null;
-                    } else {
-                        pause("Choix invalide.");
-                    }
-                    break;
-                case "0":
-                    userService.saveAccounts();
-                    projectService.saveProjects();
-                    System.out.println("Fermeture de l'application.");
-                    running = false;
-                    break;
-                default:
-                    pause("Choix invalide.");
-                    break;
-            }
+            account = handleMainMenu(account);
+            running = account != null || shouldKeepRunning();
         }
+    }
+
+    private UserService.AccountData handleMainMenu(UserService.AccountData account) {
+        clearScreen();
+        printMenu(account);
+        String choice = scanner.nextLine().trim();
+        switch (choice) {
+            case "1":
+                return handleFirstChoice(account);
+            case "2":
+                return handleSecondChoice(account);
+            case "3":
+                return handleProjectChoice(account, () -> showMembers(account));
+            case "4":
+                return handleProjectChoice(account, () -> pause(addMember(account)));
+            case "5":
+                return handleProjectChoice(account, () -> manageTask(account));
+            case "6":
+                return handleChangeProject(account);
+            case "7":
+                return handleLogout(account);
+            case "0":
+                closeApplication();
+                return null;
+            default:
+                pause("Choix invalide.");
+                return account;
+        }
+    }
+
+    private UserService.AccountData handleFirstChoice(UserService.AccountData account) {
+        if (projectService.hasActiveProject(account)) {
+            showTasks(account);
+        } else {
+            pause(chooseProject(account));
+            userService.saveAccounts();
+        }
+        return account;
+    }
+
+    private UserService.AccountData handleSecondChoice(UserService.AccountData account) {
+        if (projectService.hasActiveProject(account)) {
+            createTask(account);
+            return account;
+        }
+        userService.saveAccounts();
+        projectService.saveProjects();
+        return null;
+    }
+
+    private UserService.AccountData handleProjectChoice(
+            UserService.AccountData account,
+            Runnable action
+    ) {
+        if (projectService.hasActiveProject(account)) {
+            action.run();
+        } else {
+            pause("Choix invalide.");
+        }
+        return account;
+    }
+
+    private UserService.AccountData handleChangeProject(UserService.AccountData account) {
+        if (projectService.hasActiveProject(account)) {
+            projectService.leaveProject(account);
+            userService.saveAccounts();
+            pause(chooseProject(account));
+            userService.saveAccounts();
+        } else {
+            pause("Choix invalide.");
+        }
+        return account;
+    }
+
+    private UserService.AccountData handleLogout(UserService.AccountData account) {
+        if (projectService.hasActiveProject(account)) {
+            userService.saveAccounts();
+            projectService.saveProjects();
+            return null;
+        }
+        pause("Choix invalide.");
+        return account;
+    }
+
+    private boolean shouldKeepRunning() {
+        return running;
+    }
+
+    private void closeApplication() {
+        userService.saveAccounts();
+        projectService.saveProjects();
+        System.out.println("Fermeture de l'application.");
+        running = false;
     }
 
     // affiche le menu selon le projet courant
@@ -256,7 +294,12 @@ public class Cli {
         String statusValue = ask("Statut : 1=TODO, 2=IN_PROGRESS, 3=DONE : ");
         String deadlineValue = ask("Delai en jours : ");
         String assignValue = ask("Assigner a quelqu'un ? 1=Oui, 2=Non : ");
-        if (title == null || description == null || priorityValue == null || statusValue == null || deadlineValue == null || assignValue == null) {
+        if (title == null
+                || description == null
+                || priorityValue == null
+                || statusValue == null
+                || deadlineValue == null
+                || assignValue == null) {
             return null;
         }
 
@@ -270,7 +313,7 @@ public class Cli {
                     description,
                     priorityValue,
                     statusValue,
-                    new java.util.Date(System.currentTimeMillis() + Long.parseLong(deadlineValue) * 24L * 60L * 60L * 1000L),
+                    createDeadline(deadlineValue),
                     new User(account.pseudo, account.email),
                     assignedUser
             );
@@ -306,54 +349,51 @@ public class Cli {
             System.out.println();
             System.out.print("Votre choix : ");
             String choice = scanner.nextLine().trim();
-
-            if ("R".equalsIgnoreCase(choice)) {
-                editing = false;
-            } else if ("1".equals(choice)) {
-                String value = ask("Statut : 1=TODO, 2=IN_PROGRESS, 3=DONE : ");
-                if (value != null) {
-                    taskService.updateTaskStatusFromChoice(task.getId(), value);
-                    projectService.saveProjects();
-                }
-            } else if ("2".equals(choice)) {
-                String value = ask("Priorite : 1=LOW, 2=MEDIUM, 3=HIGH : ");
-                if (value != null) {
-                    taskService.updateTaskPriorityFromChoice(task.getId(), value);
-                    projectService.saveProjects();
-                }
-            } else if ("3".equals(choice)) {
-                String title = ask("Nouveau titre : ");
-                if (title != null) {
-                    taskService.editTask(task.getId(), title, task.getDescription());
-                    projectService.saveProjects();
-                }
-            } else if ("4".equals(choice)) {
-                String description = ask("Nouvelle description : ");
-                if (description != null) {
-                    taskService.editTask(task.getId(), task.getTitle(), description);
-                    projectService.saveProjects();
-                }
-            } else if ("5".equals(choice)) {
-                String deadlineValue = ask("Nouveau delai en jours : ");
-                if (deadlineValue != null) {
-                    taskService.updateTaskDeadline(task.getId(), new java.util.Date(System.currentTimeMillis() + Long.parseLong(deadlineValue) * 24L * 60L * 60L * 1000L));
-                    projectService.saveProjects();
-                }
-            } else if ("6".equals(choice)) {
-                User assignedUser = chooseMember(account);
-                if (assignedUser != null) {
-                    taskService.updateTaskAssignee(task.getId(), assignedUser);
-                    projectService.saveProjects();
-                }
-            } else if ("7".equals(choice)) {
-                taskService.deleteTask(task.getId());
-                projectService.saveProjects();
-                pause("Tache supprimee.");
-                editing = false;
-            } else {
-                pause("Choix invalide.");
-            }
+            editing = handleTaskAction(choice, account, taskService, task);
         }
+    }
+
+    private boolean handleTaskAction(
+            String choice,
+            UserService.AccountData account,
+            TaskService taskService,
+            Task task
+    ) {
+        if ("R".equalsIgnoreCase(choice)) {
+            return false;
+        }
+        if ("1".equals(choice)) {
+            updateStatus(taskService, task);
+            return true;
+        }
+        if ("2".equals(choice)) {
+            updatePriority(taskService, task);
+            return true;
+        }
+        if ("3".equals(choice)) {
+            updateTitle(taskService, task);
+            return true;
+        }
+        if ("4".equals(choice)) {
+            updateDescription(taskService, task);
+            return true;
+        }
+        if ("5".equals(choice)) {
+            updateDeadline(taskService, task);
+            return true;
+        }
+        if ("6".equals(choice)) {
+            updateAssignee(account, taskService, task);
+            return true;
+        }
+        if ("7".equals(choice)) {
+            taskService.deleteTask(task.getId());
+            projectService.saveProjects();
+            pause("Tache supprimee.");
+            return false;
+        }
+        pause("Choix invalide.");
+        return true;
     }
 
     // recherche une tache a partir de son id
@@ -376,7 +416,8 @@ public class Cli {
 
     // choisit un membre pour l assignation
     private User chooseMember(UserService.AccountData account) {
-        List<UserService.AccountData> members = projectService.currentProjectMembers(account, userService.getAccounts());
+        List<UserService.AccountData> members =
+                projectService.currentProjectMembers(account, userService.getAccounts());
         if (members.isEmpty()) {
             pause("Aucun membre disponible.");
             return null;
@@ -403,7 +444,8 @@ public class Cli {
     private void showMembers(UserService.AccountData account) {
         clearScreen();
         printTitle("MEMBRES DU PROJET");
-        List<UserService.AccountData> members = projectService.currentProjectMembers(account, userService.getAccounts());
+        List<UserService.AccountData> members =
+                projectService.currentProjectMembers(account, userService.getAccounts());
         if (members.isEmpty()) {
             System.out.println("Aucun membre.");
         } else {
@@ -480,12 +522,70 @@ public class Cli {
             System.out.println("Description : " + task.getDescription());
             System.out.println("Statut : " + task.getStatus());
             System.out.println("Priorite : " + task.getPriority());
-            System.out.println("Creee par : " + (task.getCreatedBy() == null ? "Non renseigne" : task.getCreatedBy().getName()));
-            System.out.println("Assignee a : " + (task.getAssignedUser() == null ? "Personne" : task.getAssignedUser().getName()));
+            System.out.println(
+                    "Creee par : " + (task.getCreatedBy() == null ? "Non renseigne" : task.getCreatedBy().getName())
+            );
+            System.out.println(
+                    "Assignee a : " + (task.getAssignedUser() == null ? "Personne" : task.getAssignedUser().getName())
+            );
             if (task.getStatus() != org.eidd.gl.projet_genieLogiciel.metier.TaskStatus.DONE) {
                 System.out.println("Delai : " + task.getDeadline());
             }
             System.out.println();
+        }
+    }
+
+    private Date createDeadline(String deadlineValue) {
+        return new Date(
+                System.currentTimeMillis() + Long.parseLong(deadlineValue) * 24L * 60L * 60L * 1000L
+        );
+    }
+
+    private void updateStatus(TaskService taskService, Task task) {
+        String value = ask("Statut : 1=TODO, 2=IN_PROGRESS, 3=DONE : ");
+        if (value != null) {
+            taskService.updateTaskStatusFromChoice(task.getId(), value);
+            projectService.saveProjects();
+        }
+    }
+
+    private void updatePriority(TaskService taskService, Task task) {
+        String value = ask("Priorite : 1=LOW, 2=MEDIUM, 3=HIGH : ");
+        if (value != null) {
+            taskService.updateTaskPriorityFromChoice(task.getId(), value);
+            projectService.saveProjects();
+        }
+    }
+
+    private void updateTitle(TaskService taskService, Task task) {
+        String title = ask("Nouveau titre : ");
+        if (title != null) {
+            taskService.editTask(task.getId(), title, task.getDescription());
+            projectService.saveProjects();
+        }
+    }
+
+    private void updateDescription(TaskService taskService, Task task) {
+        String description = ask("Nouvelle description : ");
+        if (description != null) {
+            taskService.editTask(task.getId(), task.getTitle(), description);
+            projectService.saveProjects();
+        }
+    }
+
+    private void updateDeadline(TaskService taskService, Task task) {
+        String deadlineValue = ask("Nouveau delai en jours : ");
+        if (deadlineValue != null) {
+            taskService.updateTaskDeadline(task.getId(), createDeadline(deadlineValue));
+            projectService.saveProjects();
+        }
+    }
+
+    private void updateAssignee(UserService.AccountData account, TaskService taskService, Task task) {
+        User assignedUser = chooseMember(account);
+        if (assignedUser != null) {
+            taskService.updateTaskAssignee(task.getId(), assignedUser);
+            projectService.saveProjects();
         }
     }
 

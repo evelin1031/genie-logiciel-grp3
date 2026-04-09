@@ -95,7 +95,10 @@ public class ProjectService {
     }
 
     // retourne juste les comptes membres du projet courant
-    public List<UserService.AccountData> currentProjectMembers(UserService.AccountData account, List<UserService.AccountData> accounts) {
+    public List<UserService.AccountData> currentProjectMembers(
+            UserService.AccountData account,
+            List<UserService.AccountData> accounts
+    ) {
         ProjectSpace project = currentProject(account);
         return project == null ? new ArrayList<>() : accounts.stream()
                 .filter(user -> project.members.contains(user.email))
@@ -105,7 +108,10 @@ public class ProjectService {
     // prepare la liste affichee dans le menu des projets
     public List<String> projectLabels(UserService.AccountData account) {
         return projects.values().stream()
-                .map(project -> project.name + (project.members.contains(account.email) ? " (membre)" : " (non membre)"))
+                .map(project -> project.name
+                        + (project.members.contains(account.email)
+                        ? " (membre)"
+                        : " (non membre)"))
                 .toList();
     }
 
@@ -176,10 +182,14 @@ public class ProjectService {
                     );
                     task.setStatus(TaskStatus.valueOf(taskRecord.status));
                     if (taskRecord.assignedEmail != null) {
-                        task.setAssignedUser(new User(
-                                taskRecord.assignedPseudo == null ? taskRecord.assignedEmail : taskRecord.assignedPseudo,
-                                taskRecord.assignedEmail
-                        ));
+                        task.setAssignedUser(
+                                new User(
+                                        taskRecord.assignedPseudo == null
+                                                ? taskRecord.assignedEmail
+                                                : taskRecord.assignedPseudo,
+                                        taskRecord.assignedEmail
+                                )
+                        );
                     }
                     task.setCreatedBy(user);
                     project.service.createTask(task);

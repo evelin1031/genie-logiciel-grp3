@@ -16,7 +16,9 @@ import com.google.gson.reflect.TypeToken;
 
 public class AppDataStore {
     // gere la lecture et l ecriture de app data json
-    private static final File FILE = new File("app-data.json");
+    private static final File FILE = new File(
+            System.getenv().getOrDefault("APP_DATA_FILE", "app-data.json")
+    );
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public List<UserService.AccountData> readAccounts() {
